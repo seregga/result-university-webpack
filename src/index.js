@@ -12,21 +12,21 @@ import winterBg from './assets/winter-bg.jpg'
 
 const trackList = [
     {
-        id: 1,
+        id: 0,
         track: summer,
         icon: sunIcon,
         background: summerBg,
         current: false
     },
     {
-        id: 2,
+        id: 1,
         track: rain,
         icon: rainIcon,
         background: rainBg,
         current: false
     },
     {
-        id: 3,
+        id: 2,
         track: winter,
         icon: snowIcon,
         background: winterBg,
@@ -43,18 +43,24 @@ volumeSelector.addEventListener("change", (e) => {
     audio.volume = e.currentTarget.value / 100
 })
 
-function getBackStr(backImg) {
-    return `url(${backImg}) no-repeat 0 0/cover`
+function getBackStr(url) {
+    return `url(${url})  0 0 / cover no-repeat`
 }
 
-function handleTrackBtn(e, oTrack) {
+function handleTrackBtn(e) {
+    if (e.target.localName != "span") {
+        return
+    }
+
+    const oTrack = trackList[e.target.id]
+
     if (oTrack.current) {
         if (audio.paused) {
             audio.play()
-            e.currentTarget.style.background = getBackStr(pauseIcon)
+            e.target.style.background = getBackStr(pauseIcon)
         } else {
             audio.pause()
-            e.currentTarget.style.background = getBackStr(oTrack.icon)
+            e.target.style.background = getBackStr(oTrack.icon)
         }
     } else {
         trackList.forEach(el => {
@@ -68,12 +74,13 @@ function handleTrackBtn(e, oTrack) {
         })
         audio.src = oTrack.track
         audio.play()
-        e.currentTarget.style.background = getBackStr(pauseIcon)
+        e.target.style.background = getBackStr(pauseIcon)
     }
 }
 
 function createMusicList(list) {
     const musicList = document.getElementsByTagName('ul')[0];
+    musicList.addEventListener('click', (e) => handleTrackBtn(e))
 
     list.forEach(el => {
         const track = document.createElement('li')
@@ -86,7 +93,6 @@ function createMusicList(list) {
         track.append(trackBtn)
         musicList.append(track)
 
-        trackBtn.addEventListener('click', (e) => handleTrackBtn(e, el))
     })
 }
 

@@ -1,9 +1,9 @@
-const { merge } = require('webpack-merge')
-const commonConfig = require('./webpack.config.common')
+const { mergee } = require('webpack-merge')
+const commonConfigg = require('./webpack.config.common')
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 
-module.exports = merge(commonConfig, {
+module.exports = mergee(commonConfigg, {
     mode: 'production',
     optimization: {
         minimize: true,

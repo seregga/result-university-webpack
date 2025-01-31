@@ -34,52 +34,63 @@ const trackList = [
     },
 ]
 
+const volumeSelector = document.querySelector<HTMLInputElement>("#volume-control")
 const audio = new Audio()
+audio.loop = true
 
-const volumeSelector = document.querySelector("#volume-control")
-audio.volume = volumeSelector.value / 100
-audio.loop = true;
-volumeSelector.addEventListener("change", (e) => {
-    audio.volume = e.currentTarget.value / 100
-})
+if (volumeSelector) { 
+    audio.volume = parseFloat(volumeSelector.value) / 100
+    volumeSelector.addEventListener("input", (e) => {        
+        audio.volume = parseFloat(volumeSelector.value) / 100
+    })
+} 
 
-function getBackStr(url) {
+
+function getBackStr(url: string) {
     return `url(${url})  0 0 / cover no-repeat`
 }
 
-function handleTrackBtn(e) {
-    if (e.target.localName != "span") {
+function handleTrackBtn(e: MouseEvent) {
+    if ((e.target as HTMLElement).localName != "span") {
         return
     }
 
-    const oTrack = trackList[e.target.id]
+    const oTrack = trackList[Number((e.target as HTMLElement).id)]
 
     if (oTrack.current) {
         if (audio.paused) {
-            audio.play()
-            e.target.style.background = getBackStr(pauseIcon)
+            audio.play();
+            (e.target as HTMLElement).style.background = getBackStr(pauseIcon)
         } else {
-            audio.pause()
-            e.target.style.background = getBackStr(oTrack.icon)
+            audio.pause();
+            (e.target as HTMLElement).style.background = getBackStr(oTrack.icon)
         }
     } else {
-        trackList.forEach(el => {
+        trackList.forEach((el) => {
             if (el.id === oTrack.id) {
                 el.current = true
-                document.querySelector('.background').style.background = getBackStr(el.background)
+                const b = document.getElementById('background')
+                    document.getElementById('background')!.style.background = getBackStr(el.background)
             } else {
                 el.current = false
-                document.getElementById(`${el.id}`).style.background = getBackStr(el.icon)
+                const b = document.getElementById(`${el.id}`)
+                b && ((b.style.background = getBackStr(el.icon)))
             }
         })
         audio.src = oTrack.track
-        audio.play()
-        e.target.style.background = getBackStr(pauseIcon)
+        audio.play();
+        (e.target as HTMLElement).style.background = getBackStr(pauseIcon)
     }
 }
 
-function createMusicList(list) {
-    const musicList = document.getElementsByTagName('ul')[0];
+interface ListTypes {
+    background: string
+    icon: string
+    id: number
+}
+
+function createMusicList(list: ListTypes[]) {
+    const musicList = document.getElementsByTagName('ul')[0]
     musicList.addEventListener('click', (e) => handleTrackBtn(e))
 
     list.forEach(el => {
